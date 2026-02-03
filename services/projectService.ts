@@ -12,8 +12,6 @@ export const getProjects = async (): Promise<Project[]> => {
     return response.data;
   } catch (error) {
     console.error('Error fetching projects:', error);
-    // In a real app, you might want to throw the error to be handled by the calling component
-    // or return a default value like an empty array.
     throw error;
   }
 };
