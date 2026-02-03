@@ -13,6 +13,7 @@ import About from './pages/About';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsConditions from './pages/TermsConditions';
 import FAQ from './pages/FAQ';
+import ProjectList from './pages/ProjectList';
 
 const App: React.FC = () => {
   return (
@@ -23,6 +24,7 @@ const App: React.FC = () => {
           <Route path="/" element={<Home />} />
           <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/project/:id" element={<ProjectDetailPage />} />
+          <Route path="/project-list" element={<ProjectList />} />
           <Route path="/unit/:id" element={<UnitDetailPage />} />
           <Route path="/kpr" element={<KPRPage />} />
           <Route path="/about" element={<About />} />

@@ -1,112 +1,147 @@
 // services/propertyService.ts
 import { Property, Agent, Project, Unit } from '../types';
-import { mockProperties, mockAgents, mockProjects, mockUnits } from '../data/mockData';
 
-// This is a mock database. In a real app, this would be your API calls.
-let propertiesDB = [...mockProperties];
-const agentsDB = [...mockAgents];
-const projectsDB = [...mockProjects];
-const unitsDB = [...mockUnits];
+const BASE_URL = process.env.VITE_BACKEND_API_URL;
 
-const simulateNetwork = (delay = 500) => new Promise(res => setTimeout(res, delay));
+if (!BASE_URL) {
+  console.error('VITE_BACKEND_API_URL is not defined. Please set it in your .env file.');
+  // Fallback to a default or throw an error to prevent further issues
+  // For now, we'll just log an error and use an empty string for BASE_URL
+  // In a production app, you might want a more robust error handling.
+}
+
+// --- Helper for API calls ---
+async function fetchData<T>(endpoint: string): Promise<T> {
+  if (!BASE_URL) {
+    throw new Error('Backend API URL is not configured.');
+  }
+  const response = await fetch(`${BASE_URL}${endpoint}`);
+  if (!response.ok) {
+    throw new Error(`API call failed: ${response.statusText}`);
+  }
+  return response.json();
+}
 
 // --- Main Property Functions ---
 
 export const getProperties = async (): Promise<Property[]> => {
-  await simulateNetwork();
-  console.log('Fetching all properties');
-  return Promise.resolve(propertiesDB);
+  console.log('Fetching all properties from backend');
+  return fetchData<Property[]>('/properties');
 };
 
 export const getPropertyById = async (id: string): Promise<Property | undefined> => {
-  await simulateNetwork(300);
-  console.log(`Fetching property with id: ${id}`);
-  const property = propertiesDB.find(p => p.id === id);
-  return Promise.resolve(property);
+  console.log(`Fetching property with id: ${id} from backend`);
+  return fetchData<Property>(`/properties/${id}`);
 };
 
 export const createProperty = async (newPropertyData: Omit<Property, 'id' | 'createdAt' | 'updatedAt'>): Promise<Property> => {
-  await simulateNetwork();
-  const newProperty: Property = {
-    ...newPropertyData,
-    id: `prop-${Date.now()}`,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-  propertiesDB.push(newProperty);
-  console.log('Created new property:', newProperty);
-  return Promise.resolve(newProperty);
+  // This function still uses mock data. Connect to backend API for actual creation.
+  console.warn('createProperty is using mock data and not connected to the backend.');
+  const response = await fetch(`${BASE_URL}/properties`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(newPropertyData),
+  });
+  if (!response.ok) {
+    throw new Error(`API call failed: ${response.statusText}`);
+  }
+  return response.json();
 };
 
 export const updateProperty = async (id: string, updates: Partial<Property>): Promise<Property | undefined> => {
-  await simulateNetwork();
-  const index = propertiesDB.findIndex(p => p.id === id);
-  if (index === -1) {
-    console.error(`Property with id: ${id} not found`);
-    return Promise.resolve(undefined);
+  // This function still uses mock data. Connect to backend API for actual updates.
+  console.warn('updateProperty is using mock data and not connected to the backend.');
+  const response = await fetch(`${BASE_URL}/properties/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(updates),
+  });
+  if (!response.ok) {
+    throw new Error(`API call failed: ${response.statusText}`);
   }
-  const updatedProperty = {
-    ...propertiesDB[index],
-    ...updates,
-    updatedAt: new Date().toISOString(),
-  };
-  propertiesDB[index] = updatedProperty;
-  console.log(`Updated property with id: ${id}`, updatedProperty);
-  return Promise.resolve(updatedProperty);
+  return response.json();
 };
 
 export const deleteProperty = async (id: string): Promise<boolean> => {
-  await simulateNetwork(700);
-  const index = propertiesDB.findIndex(p => p.id === id);
-  if (index === -1) {
-    console.error(`Property with id: ${id} not found for deletion`);
-    return Promise.resolve(false);
+  // This function still uses mock data. Connect to backend API for actual deletion.
+  console.warn('deleteProperty is using mock data and not connected to the backend.');
+  const response = await fetch(`${BASE_URL}/properties/${id}`, {
+    method: 'DELETE',
+  });
+  if (!response.ok) {
+    throw new Error(`API call failed: ${response.statusText}`);
   }
-  propertiesDB.splice(index, 1);
-  console.log(`Deleted property with id: ${id}`);
-  return Promise.resolve(true);
+  return response.ok;
 };
 
 
 // --- CMS-Specific Logic ---
 
 export const setPropertyStatus = async (id: string, status: 'published' | 'draft'): Promise<Property | undefined> => {
-  return updateProperty(id, { status });
+  // This function now attempts to connect to the backend for status updates.
+  console.log(`Setting status for property ${id} to ${status} via backend.`);
+  const response = await fetch(`${BASE_URL}/properties/${id}/status`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ status }),
+  });
+  if (!response.ok) {
+    throw new Error(`API call failed: ${response.statusText}`);
+  }
+  return response.json();
 };
 
 export const assignAgentToProperty = async (propertyId: string, agentId: string): Promise<Property | undefined> => {
-  return updateProperty(propertyId, { agentId });
+  // This function now attempts to connect to the backend for agent assignment.
+  console.log(`Assigning agent ${agentId} to property ${propertyId} via backend.`);
+  const response = await fetch(`${BASE_URL}/properties/${propertyId}/agent`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ agentId }),
+  });
+  if (!response.ok) {
+    throw new Error(`API call failed: ${response.statusText}`);
+  }
+  return response.json();
 };
 
 
 // --- Related Data Functions ---
 
 export const getAgents = async (): Promise<Agent[]> => {
-    await simulateNetwork(200);
-    return Promise.resolve(agentsDB);
+    console.log('Fetching all agents from backend');
+    return fetchData<Agent[]>('/agents');
 };
 
 export const getProjects = async (): Promise<Project[]> => {
-    await simulateNetwork(200);
-    return Promise.resolve(projectsDB);
+    console.log('Fetching all projects from backend');
+    return fetchData<Project[]>('/projects');
 };
 
 export const getProjectById = async (id: string): Promise<Project | undefined> => {
-    await simulateNetwork(300);
-    return Promise.resolve(projectsDB.find(p => p.id === id));
+    console.log(`Fetching project with id: ${id} from backend`);
+    return fetchData<Project>(`/projects/${id}`);
 }
 
 export const getUnits = async (): Promise<Unit[]> => {
-    await simulateNetwork(500);
-    return Promise.resolve(unitsDB);
+    console.log('Fetching all units from backend');
+    return fetchData<Unit[]>('/units');
 }
 
 export const getUnitById = async (id: string): Promise<Unit | undefined> => {
-    await simulateNetwork(300);
-    return Promise.resolve(unitsDB.find(u => u.id === id));
+    console.log(`Fetching unit with id: ${id} from backend`);
+    return fetchData<Unit>(`/units/${id}`);
 }
 
 export const getUnitsByProjectId = async (projectId: string): Promise<Unit[]> => {
-    await simulateNetwork(300);
-    return Promise.resolve(unitsDB.filter(u => u.projectId === projectId));
+    console.log(`Fetching units for project with id: ${projectId} from backend`);
+    return fetchData<Unit[]>(`/projects/${projectId}/units`);
 }
