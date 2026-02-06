@@ -1,0 +1,15 @@
+{
+    "navbar": {
+      "home": "Home",
+      "projects": "Projects",
+      "kpr": "KPR",
+      "about": "About Us",
+      "contact": "Contact Us",
+      "contact_button": "Contact Us"
+    },
+    "home_hero": {
+        "title": "Find Your Khaya Home",
+        "subtitle": "Where modern aesthetic meets comfort."
+    }
+  }
+  

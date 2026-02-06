@@ -2,10 +2,15 @@
 export default {
   content: [
     "./index.html",
-    "./**/*.{js,ts,jsx,tsx}",
+    "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+        colors: {
+            'brand-pink': '#F472B6',
+            'brand-cyan': '#22D3EE',
+        }
+    },
   },
   plugins: [],
 }

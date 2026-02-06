@@ -1,0 +1,15 @@
+{
+    "navbar": {
+      "home": "Beranda",
+      "projects": "Proyek",
+      "kpr": "KPR",
+      "about": "Tentang Kami",
+      "contact": "Hubungi Kami",
+      "contact_button": "Hubungi Kami"
+    },
+    "home_hero": {
+        "title": "Temukan Hunian Khaya Anda",
+        "subtitle": "Di mana estetika modern bertemu kenyamanan."
+    }
+  }
+  

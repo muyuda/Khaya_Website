@@ -10,9 +10,11 @@ export interface Project {
   priceRange: string;
   location: string;
   imageUrl: string;
-  isHot?: boolean;
-  isNew?: boolean;
+  heroImage: string; // Ensure this is a string
+  isHot?: boolean; // Added for Home.tsx filtering
+  isNew?: boolean; // Added for Home.tsx filtering
   description?: string;
+  units: Unit[]; // Keep nested units for ProjectDetailPage/UnitDetailPage
 }
 
 export interface Unit {
@@ -30,7 +32,7 @@ export interface Unit {
   landArea: number; // LT
   buildingArea: number; // LB
   imageUrl: string;
-  galleryUrls: string[];
+  galleryUrls: string[]; // Changed back to galleryUrls as per constants.ts
   description: string;
   specifications: string[];
   facilities: string[];
@@ -55,4 +57,11 @@ export interface KPRCalculation {
   monthlyPayment: number;
   totalInterest: number;
   totalPayment: number;
+}
+
+export interface Agent {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
 }
