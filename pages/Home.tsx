@@ -1,19 +1,69 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Hero, ProjectCard } from '../components/UIComponents';
-import { MOCK_PROJECTS, MOCK_UNITS } from '../constants';
+import { getProjects } from '../services/projectService';
+import { Project } from '../types';
 import { ArrowRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
-  const newProjects = MOCK_PROJECTS.filter(p => p.isNew);
-  const hotProjects = MOCK_PROJECTS.filter(p => p.isHot);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        setLoading(true);
+        const data = await getProjects();
+        setProjects(data);
+      } catch (err) {
+        setError('Gagal memuat data proyek terbaru.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   const handleSearch = (term: string) => {
     if (term.trim()) {
         navigate(`/projects?q=${encodeURIComponent(term)}`);
     }
   };
+
+  // Temporary logic to split projects into "new" and "hot" sections
+  // In a real app, this would ideally come from API properties
+  const newProjects = projects.slice(0, 4);
+  const hotProjects = projects.slice(4, 8);
+
+  const renderProjectSection = (title: string, subtitle: string, projectList: Project[], subtitleColor = 'text-brand-pink') => (
+    <section className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-12">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h2 className="text-3xl font-bold text-slate-800">{title}</h2>
+          <p className={subtitleColor}>{subtitle}</p>
+        </div>
+        <Link to="/projects" className="flex items-center gap-2 text-brand-pink font-semibold hover:text-brand-pink-dark transition-colors">
+            View All <ArrowRight size={18} />
+        </Link>
+      </div>
+      
+      {loading ? (
+        <p>Loading projects...</p>
+      ) : error ? (
+        <p className="text-red-500">{error}</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {projectList.map(project => (
+            <ProjectCard key={project.id} project={project} />
+          ))}
+        </div>
+      )}
+    </section>
+  );
 
   return (
     <div className="space-y-20 pb-20">
@@ -29,47 +79,14 @@ const Home: React.FC = () => {
         enableAiToggle={true}
       />
 
-      {/* New Properties - Carousel Style */}
-      <section className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-12">
-        <div className="flex items-center justify-between mb-8">
-            <div>
-                <h2 className="text-3xl font-bold text-slate-800">Fresh Drops</h2>
-                <p className="text-brand-pink">Newly released properties just for you.</p>
-            </div>
+      {/* Since the API doesn't distinguish, we'll use a generic renderer. */}
+      {renderProjectSection("Fresh Drops", "Newly released properties just for you.", newProjects)}
+      
+      <div className='max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-12'>
+        <div className='bg-white/50 py-12 rounded-[3rem] border border-white shadow-xl shadow-brand-pink/5'>
+          {renderProjectSection("Hot in Jabodetabek", "Trending properties everyone is talking about.", hotProjects, 'text-brand-cyan')}
         </div>
-        
-        {/* Simple Horizontal Scroll Container */}
-        <div className="flex overflow-x-auto space-x-6 pb-8 snap-x scrollbar-hide">
-            {newProjects.map(project => {
-                const unitCount = MOCK_UNITS.filter(u => u.projectId === project.id).length;
-                return (
-                    <div key={project.id} className="min-w-[300px] md:min-w-[400px] snap-center h-[350px]">
-                        <ProjectCard project={project} unitCount={unitCount} />
-                    </div>
-                );
-            })}
-        </div>
-      </section>
-
-      {/* Hot Properties - Grid */}
-      <section className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-12 bg-white/50 py-12 rounded-[3rem] border border-white shadow-xl shadow-brand-pink/5">
-        <div className="flex items-center justify-between mb-10">
-            <div>
-                <h2 className="text-3xl font-bold text-slate-800">Hot in Jabodetabek</h2>
-                <p className="text-brand-cyan">Trending properties everyone is talking about.</p>
-            </div>
-            <Link to="/projects" className="flex items-center gap-2 text-brand-pink font-semibold hover:text-brand-pink-dark transition-colors">
-                View More <ArrowRight size={18} />
-            </Link>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {hotProjects.slice(0, 8).map(project => {
-                const unitCount = MOCK_UNITS.filter(u => u.projectId === project.id).length;
-                return <ProjectCard key={project.id} project={project} unitCount={unitCount} />
-            })}
-        </div>
-      </section>
+      </div>
     </div>
   );
 };

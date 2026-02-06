@@ -27,3 +27,21 @@ export const formatCurrency = (amount: number): string => {
     maximumFractionDigits: 0,
   }).format(amount);
 };
+
+/**
+ * Formats a large number into an abbreviated Indonesian Rupiah (IDR) string.
+ * e.g., 2,500,000,000 becomes "Rp 2,5 M" and 500,000,000 becomes "Rp 500 Jt".
+ * @param amount The number to format.
+ * @returns An abbreviated currency string.
+ */
+export const formatCurrencyAbbreviated = (amount: number): string => {
+    if (amount >= 1_000_000_000) {
+        const value = amount / 1_000_000_000;
+        return `Rp ${value.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 1 })} M`;
+    }
+    if (amount >= 1_000_000) {
+        const value = amount / 1_000_000;
+        return `Rp ${value.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} Jt`;
+    }
+    return formatCurrency(amount);
+};

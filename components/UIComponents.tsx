@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { MapPin, Bed, Bath, Car, Search, ArrowRight, Sparkles, User, Bot, Send } from 'lucide-react';
 import { Project, Unit } from '../types';
 import { generateResponse } from '../services/geminiService';
+import { formatCurrency } from '../utils/formatters'; // Import formatCurrency
 
 interface HeroProps {
   title: string;

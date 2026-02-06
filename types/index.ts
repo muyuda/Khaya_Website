@@ -31,18 +31,15 @@ export interface Agent {
 }
 
 /**
- * Represents a housing project or development.
+ * Represents a housing project or development from the backend.
  */
 export interface Project {
-  id: string;
-  name: string;
-  developer: string;
+  id: number;
+  title: string;
+  description: string;
+  price: number; // Raw number from backend
   location: string;
-  description?: string;
-  imageUrl?: string;
-  priceRange: string;
-  category: PropertyCategory;
-  propertyType: 'House' | 'Apartment' | 'Ruko' | 'Villa';
+  image_url: string; // snake_case from backend
 }
 
 /**
