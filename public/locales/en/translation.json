@@ -9,7 +9,21 @@
     },
     "home_hero": {
         "title": "Find Your Khaya Home",
-        "subtitle": "Where modern aesthetic meets comfort."
+        "subtitle": "Where modern aesthetic meets comfort.",
+        "search_placeholder": "What are you looking for? (e.g., 'Modern House in BSD')",
+        "primary_button": "Contact Us",
+        "secondary_button": "View Projects"
+    },
+    "home_sections": {
+        "fresh_drops_title": "Fresh Drops",
+        "fresh_drops_subtitle": "Newly released properties just for you.",
+        "hot_jabodetabek_title": "Hot in Jabodetabek",
+        "hot_jabodetabek_subtitle": "Trending properties everyone is talking about.",
+        "view_all": "View All",
+        "failed_load_projects": "Failed to load projects."
+    },
+    "project_card": {
+        "new_label": "New",
+        "unit_types_available": "Types Available"
     }
   }
-  

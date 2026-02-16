@@ -9,7 +9,21 @@
     },
     "home_hero": {
         "title": "Temukan Hunian Khaya Anda",
-        "subtitle": "Di mana estetika modern bertemu kenyamanan."
+        "subtitle": "Di mana estetika modern bertemu kenyamanan.",
+        "search_placeholder": "Apa yang Anda cari? (contoh: 'Rumah Modern di BSD')",
+        "primary_button": "Hubungi Kami",
+        "secondary_button": "Lihat Proyek"
+    },
+    "home_sections": {
+        "fresh_drops_title": "Proyek Baru",
+        "fresh_drops_subtitle": "Properti terbaru khusus untuk Anda.",
+        "hot_jabodetabek_title": "Terpopuler di Jabodetabek",
+        "hot_jabodetabek_subtitle": "Properti tren yang sedang banyak dibicarakan.",
+        "view_all": "Lihat Semua",
+        "failed_load_projects": "Gagal memuat proyek."
+    },
+    "project_card": {
+        "new_label": "Baru",
+        "unit_types_available": "Tipe Unit Tersedia"
     }
   }
-  

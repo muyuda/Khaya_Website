@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { MapPin, Bed, Bath, Car, Search, ArrowRight, Sparkles, User, Bot, Send } from 'lucide-react';
 import { Project, Unit } from '../types';
 import { generateResponse } from '../services/geminiService';
+import { useTranslation } from 'react-i18next'; // Import useTranslation
+import { MOCK_UNITS } from '../constants'; // Import MOCK_UNITS to calculate unitCount
 
 // --- Hero Component ---
 interface HeroProps {
@@ -114,6 +116,7 @@ export const Hero: React.FC<HeroProps> = ({
 
 // --- Project Card Component ---
 export const ProjectCard: React.FC<{ project: Project; unitCount?: number }> = ({ project, unitCount }) => {
+  const { t } = useTranslation(); // Get translation function
   return (
     <Link to={`/project/${project.id}`} className="group block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl hover:shadow-brand-pink/20 transition-all duration-300 border border-slate-100 h-full flex flex-col transform hover:-translate-y-1">
       <div className="relative h-56 flex-shrink-0 overflow-hidden">
@@ -123,7 +126,7 @@ export const ProjectCard: React.FC<{ project: Project; unitCount?: number }> = (
             <span className={`px-3 py-1 rounded-full text-xs font-semibold text-white shadow-lg ${project.category === 'Primary' ? 'bg-brand-cyan' : 'bg-brand-pink'}`}>
               {project.category}
             </span>
-            {project.isNew && <span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-500 text-white shadow-lg">New</span>}
+            {project.isNew && <span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-500 text-white shadow-lg">{t('project_card.new_label')}</span>}
         </div>
         <div className="absolute bottom-4 left-4 text-white">
           <h3 className="font-bold text-lg drop-shadow-md">{project.name}</h3>
@@ -142,7 +145,7 @@ export const ProjectCard: React.FC<{ project: Project; unitCount?: number }> = (
         {unitCount !== undefined && (
              <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between">
                 <div className="flex items-center gap-2 text-sm font-medium text-slate-500">
-                    {unitCount} Tipe Unit
+                    {unitCount} {t('project_card.unit_types_available')}
                 </div>
                 <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-brand-cyan group-hover:text-white transition-all">
                     <ArrowRight size={18} />
@@ -156,6 +159,7 @@ export const ProjectCard: React.FC<{ project: Project; unitCount?: number }> = (
 
 // --- Unit Card Component ---
 export const UnitCard: React.FC<{ unit: Unit }> = ({ unit }) => {
+  const { t } = useTranslation(); // Get translation function
   return (
     <Link to={`/unit/${unit.id}`} className="group block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1 h-full">
       <div className="relative h-48 overflow-hidden">

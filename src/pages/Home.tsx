@@ -17,10 +17,10 @@ const Home: React.FC = () => {
     const fetchProjects = async () => {
       try {
         setLoading(true);
-        const data = await getProjects();
+        const data = await getProjects(); // Fetch all processed projects
         setAllProjects(data);
       } catch (err) {
-        setError('Failed to load projects.');
+        setError(t('home_sections.failed_load_projects')); // Use translation
         console.error(err);
       } finally {
         setLoading(false);
@@ -38,21 +38,21 @@ const Home: React.FC = () => {
   const newProjects = allProjects.filter(p => p.isNew).slice(0, 4);
   const hotProjects = allProjects.filter(p => p.isHot).slice(0, 8);
 
-  const renderProjectSection = (title: string, subtitle: string, projectList: Project[], subtitleColor = 'text-brand-pink', sectionBgClass = '') => (
+  const renderProjectSection = (titleKey: string, subtitleKey: string, projectList: Project[], subtitleColor = 'text-brand-pink', sectionBgClass = '') => (
     <section className={`max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-12 ${sectionBgClass}`}>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-3xl font-bold text-slate-800">{title}</h2>
-          <p className={subtitleColor}>{subtitle}</p>
+          <h2 className="text-3xl font-bold text-slate-800">{t(titleKey)}</h2>
+          <p className={subtitleColor}>{t(subtitleKey)}</p>
         </div>
         <Link to="/projects" className="flex items-center gap-2 text-brand-pink font-semibold hover:text-brand-pink-dark transition-colors">
-            View All <ArrowRight size={18} />
+            {t('home_sections.view_all')} <ArrowRight size={18} />
         </Link>
       </div>
       
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {Array.from({ length: 4 }).map((_, idx) => (
+            {Array.from({ length: projectList.length || 4 }).map((_, idx) => (
                 <div key={idx} className="bg-white rounded-2xl shadow-lg animate-pulse">
                     <div className="w-full h-48 bg-slate-200 rounded-t-2xl"></div>
                     <div className="p-4 space-y-3">
@@ -80,20 +80,20 @@ const Home: React.FC = () => {
       <Hero 
         title={t('home_hero.title')}
         subtitle={t('home_hero.subtitle')}
-        placeholder="What are you looking for? (e.g., 'Modern House in BSD')"
-        primaryBtnText="Hubungi Kami"
-        secondaryBtnText="Lihat Project"
+        placeholder={t('home_hero.search_placeholder')}
+        primaryBtnText={t('home_hero.primary_button')}
+        secondaryBtnText={t('home_hero.secondary_button')}
         onPrimaryClick={() => navigate('/contact')}
         onSecondaryClick={() => navigate('/projects')}
         onSearch={handleSearch}
         enableAiToggle={true}
       />
 
-      {renderProjectSection("Fresh Drops", "Newly released properties just for you.", newProjects)}
+      {renderProjectSection("home_sections.fresh_drops_title", "home_sections.fresh_drops_subtitle", newProjects)}
       
       <div className='max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-12'>
         <div className='bg-white/50 py-12 rounded-[3rem] border border-white shadow-xl shadow-brand-pink/5'>
-          {renderProjectSection("Hot in Jabodetabek", "Trending properties everyone is talking about.", hotProjects, 'text-brand-cyan')}
+          {renderProjectSection("home_sections.hot_jabodetabek_title", "home_sections.hot_jabodetabek_subtitle", hotProjects, 'text-brand-cyan')}
         </div>
       </div>
     </div>

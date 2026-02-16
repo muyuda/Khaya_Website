@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next'; // Import useTranslation
-import { Menu, Search, Globe, ChevronDown, X, Home as HomeIcon, Building, Calculator, User, Mail, FileText } from 'lucide-react';
-
-const LOGO_URL = "https://lh3.googleusercontent.com/d/1ZsoIf9J1TUfhvrSXI5ikOT-EPIeeB9fH";
+import { Search, Menu, X, ChevronDown, Globe } from 'lucide-react';
 
 const Navbar: React.FC = () => {
-  const { t, i18n } = useTranslation(); // Get translation function and i18n instance
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [projectOpen, setProjectOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [lang, setLang] = useState<'EN' | 'ID'>('EN');
   const location = useLocation();
 
   useEffect(() => {
@@ -18,75 +15,79 @@ const Navbar: React.FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-  
-  useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [location.pathname]);
 
-  const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
-    setLangOpen(false);
-  };
-
-  const navLinkClasses = (path: string) => 
-    `block md:inline-block px-4 py-3 rounded-lg text-base md:text-sm font-medium transition-colors ${
-      location.pathname === path 
-      ? 'text-brand-pink bg-brand-pink/10' 
-      : 'text-slate-600 hover:bg-slate-50 hover:text-brand-pink'
-    }`;
+  const isActive = (path: string) => 
+    location.pathname === path 
+      ? "text-pink-500 font-bold bg-pink-50 rounded-full px-4 py-1" 
+      : "text-slate-600 hover:text-pink-500 hover:bg-pink-50 rounded-full px-4 py-1 transition-all";
 
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 shadow-md py-3' : 'bg-transparent py-4'} backdrop-blur-md`}>
+    <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 shadow-md py-2' : 'bg-white/80 py-4'} backdrop-blur-md border-b border-white/20`}>
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-12">
         <div className="flex justify-between items-center h-16">
           
-          <Link to="/" className="flex-shrink-0">
-            <img src={LOGO_URL} alt="Khaya Landmark" className="h-12 w-auto" />
+          {/* LOGO */}
+          <Link to="/" className="flex items-center gap-2">
+            <div className="w-10 h-10 bg-gradient-to-tr from-pink-500 to-cyan-400 rounded-lg flex items-center justify-center text-white font-bold text-xl">K</div>
+            <span className="font-bold text-xl text-slate-800">KHAYA</span>
           </Link>
-          
-          <div className="hidden md:flex items-center space-x-2 bg-white/50 border border-slate-100/80 rounded-full shadow-sm p-2">
-            <Link to="/" className={navLinkClasses('/')}>{t('navbar.home')}</Link>
-            <Link to="/projects" className={navLinkClasses('/projects')}>{t('navbar.projects')}</Link>
-            <Link to="/kpr" className={navLinkClasses('/kpr')}>{t('navbar.kpr')}</Link>
-            <Link to="/about" className={navLinkClasses('/about')}>{t('navbar.about')}</Link>
-            <Link to="/contact" className={navLinkClasses('/contact')}>{t('navbar.contact')}</Link>
-          </div>
 
-          <div className="hidden md:flex items-center gap-4">
-            <div className="relative">
-                <button onClick={() => setLangOpen(!langOpen)} className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all border border-transparent hover:border-slate-100 group">
-                    <Globe size={14} className="text-slate-400 group-hover:text-brand-pink" />
-                    {i18n.language.toUpperCase()}
-                    <ChevronDown size={12} className="text-slate-400" />
+          {/* DESKTOP MENU */}
+          <div className="hidden md:flex space-x-1 items-center">
+            <Link to="/" className={isActive('/')}>Home</Link>
+            
+            <div className="relative group" onMouseEnter={() => setProjectOpen(true)} onMouseLeave={() => setProjectOpen(false)}>
+              <button className={`flex items-center gap-1 ${isActive('/projects')}`}>
+                Projects <ChevronDown size={14} />
+              </button>
+              {projectOpen && (
+                <div className="absolute left-0 mt-0 w-48 bg-white rounded-xl shadow-xl border border-slate-100 py-2 animate-in fade-in zoom-in duration-200">
+                  <Link to="/projects?cat=Primary" className="block px-4 py-2 text-slate-600 hover:bg-pink-50 hover:text-pink-500 text-sm">Primary Projects</Link>
+                  <Link to="/projects?cat=Secondary" className="block px-4 py-2 text-slate-600 hover:bg-pink-50 hover:text-pink-500 text-sm">Secondary Projects</Link>
+                </div>
+              )}
+            </div>
+
+            <Link to="/kpr" className={isActive('/kpr')}>KPR</Link>
+            <Link to="/about" className={isActive('/about')}>About Us</Link>
+            <Link to="/contact" className={isActive('/contact')}>Contact Us</Link>
+
+            {/* Language Switcher */}
+            <div className="relative ml-2">
+                <button onClick={() => setLangOpen(!langOpen)} className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold text-slate-600 hover:bg-slate-50 border border-transparent hover:border-slate-100">
+                    <Globe size={14} className="text-slate-400" /> {lang} <ChevronDown size={12} />
                 </button>
                 {langOpen && (
-                    <div className="absolute top-full right-0 mt-2 w-32 bg-white rounded-xl shadow-xl border border-slate-100 py-2 animate-fade-in z-50">
-                        <button onClick={() => changeLanguage('id')} className={`w-full text-left px-4 py-2 text-xs font-bold hover:bg-slate-50 transition-colors ${i18n.language === 'id' ? 'text-brand-pink' : 'text-slate-600'}`}>Bahasa (ID)</button>
-                        <button onClick={() => changeLanguage('en')} className={`w-full text-left px-4 py-2 text-xs font-bold hover:bg-slate-50 transition-colors ${i18n.language === 'en' ? 'text-brand-pink' : 'text-slate-600'}`}>English (EN)</button>
+                    <div className="absolute top-full right-0 mt-2 w-32 bg-white rounded-xl shadow-xl border border-slate-100 py-2 flex flex-col">
+                        <button onClick={() => { setLang('ID'); setLangOpen(false); }} className="px-4 py-2 text-left text-xs font-bold hover:bg-pink-50 text-slate-600">Bahasa (ID)</button>
+                        <button onClick={() => { setLang('EN'); setLangOpen(false); }} className="px-4 py-2 text-left text-xs font-bold hover:bg-pink-50 text-slate-600">English (EN)</button>
                     </div>
                 )}
             </div>
-            <Link to="/contact" className="px-6 py-3 rounded-full bg-brand-cyan text-white font-bold shadow-lg shadow-brand-cyan/20 hover:bg-brand-cyan-dark transition-all transform hover:-translate-y-0.5">
-              {t('navbar.contact_button')}
+
+            <Link to="/projects" className="ml-2 p-2.5 rounded-full bg-cyan-50 text-cyan-500 hover:bg-pink-500 hover:text-white transition-all shadow-sm">
+              <Search size={18} />
             </Link>
           </div>
 
+          {/* MOBILE MENU BTN */}
           <div className="md:hidden">
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 text-slate-700 rounded-md hover:bg-slate-100">
-              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+             <button onClick={() => setIsOpen(!isOpen)} className="text-slate-700 hover:text-pink-500 p-2">
+                {isOpen ? <X size={28} /> : <Menu size={28} />}
+             </button>
           </div>
         </div>
       </div>
 
-      {mobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-white shadow-lg animate-fade-in-down">
-          <div className="px-4 pt-2 pb-4 space-y-1">
-            <Link to="/" className={navLinkClasses('/')}><HomeIcon size={18} className="inline mr-2"/>{t('navbar.home')}</Link>
-            <Link to="/projects" className={navLinkClasses('/projects')}><Building size={18} className="inline mr-2"/>{t('navbar.projects')}</Link>
-            <Link to="/kpr" className={navLinkClasses('/kpr')}><Calculator size={18} className="inline mr-2"/>{t('navbar.kpr')}</Link>
-            <Link to="/about" className={navLinkClasses('/about')}><User size={18} className="inline mr-2"/>{t('navbar.about')}</Link>
-            <Link to="/contact" className={navLinkClasses('/contact')}><Mail size={18} className="inline mr-2"/>{t('navbar.contact')}</Link>
+      {/* MOBILE DROPDOWN */}
+      {isOpen && (
+        <div className="md:hidden bg-white border-t border-slate-100 absolute w-full shadow-2xl h-screen overflow-y-auto pb-20">
+          <div className="px-4 pt-4 space-y-2">
+            <Link to="/" className="block px-4 py-3 rounded-lg text-slate-600 hover:bg-pink-50 font-medium" onClick={() => setIsOpen(false)}>Home</Link>
+            <Link to="/projects" className="block px-4 py-3 rounded-lg text-slate-600 hover:bg-pink-50 font-medium" onClick={() => setIsOpen(false)}>Projects</Link>
+            <Link to="/kpr" className="block px-4 py-3 rounded-lg text-slate-600 hover:bg-pink-50 font-medium" onClick={() => setIsOpen(false)}>KPR Calculator</Link>
+            <Link to="/about" className="block px-4 py-3 rounded-lg text-slate-600 hover:bg-pink-50 font-medium" onClick={() => setIsOpen(false)}>About Us</Link>
+            <Link to="/contact" className="block px-4 py-3 rounded-lg text-slate-600 hover:bg-pink-50 font-medium" onClick={() => setIsOpen(false)}>Contact Us</Link>
           </div>
         </div>
       )}

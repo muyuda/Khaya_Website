@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Phone } from 'lucide-react';
+import SmartAssistant from './components/SmartAssistant';
 
 // Components
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import AuraAssistant from './components/AuraAssistant';
+
 
 // Pages
 import Home from './pages/Home';
@@ -49,12 +50,7 @@ const AppContent: React.FC = () => {
 
       <Footer />
       
-      <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end space-y-3">
-        <AuraAssistant />
-        <button className="p-4 rounded-full shadow-2xl shadow-pink-500/40 text-white transition-all duration-300 transform hover:scale-110 bg-gradient-to-tr from-pink-500 to-cyan-400">
-           <Phone size={28} />
-        </button>
-      </div>
+      <SmartAssistant />
     </div>
   );
 };

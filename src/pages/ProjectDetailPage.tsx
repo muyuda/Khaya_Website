@@ -39,30 +39,32 @@ const ProjectDetailPage: React.FC = () => {
             </div>
 
             {/* Available Units Section */}
-            <div className="py-16 bg-white">
-                <div className="container mx-auto px-4">
-                    <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Available Units</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {project.units.map(unit => (
-                            <Link to={`/unit/${unit.id}`} key={unit.id} className="group block bg-white rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
-                                <div className="relative">
-                                    <img src={unit.images[0]} alt={`Unit ${unit.type}`} className="w-full h-48 object-cover" />
-                                    <div className="absolute top-2 right-2 bg-white px-3 py-1 rounded-full text-sm font-semibold text-gray-800">
-                                        {unit.type}
+            {project.units && project.units.length > 0 && (
+                <div className="py-16 bg-white">
+                    <div className="container mx-auto px-4">
+                        <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Available Units</h2>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                            {project.units.map(unit => (
+                                <Link to={`/unit/${unit.id}`} key={unit.id} className="group block bg-white rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
+                                    <div className="relative">
+                                        <img src={unit.images[0]} alt={`Unit ${unit.type}`} className="w-full h-48 object-cover" />
+                                        <div className="absolute top-2 right-2 bg-white px-3 py-1 rounded-full text-sm font-semibold text-gray-800">
+                                            {unit.type}
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="p-5">
-                                    <h3 className="text-xl font-bold text-gray-800 truncate">{unit.name}</h3>
-                                    <p className="text-gray-600 mt-1">{unit.specs.bedrooms} Beds • {unit.specs.bathrooms} Baths</p>
-                                    <p className="mt-4 text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-brand-cyan to-teal-500">
-                                        {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(unit.price)}
-                                    </p>
-                                </div>
-                            </Link>
-                        ))}
+                                    <div className="p-5">
+                                        <h3 className="text-xl font-bold text-gray-800 truncate">{unit.name}</h3>
+                                        <p className="text-gray-600 mt-1">{(unit.specs?.bedrooms || '')} Beds • {(unit.specs?.bathrooms || '')} Baths</p>
+                                        <p className="mt-4 text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-brand-cyan to-teal-500">
+                                            {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(unit.price)}
+                                        </p>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
         </>
     );
 };
