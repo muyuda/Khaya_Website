@@ -1,10 +1,13 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const TermsConditions: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <div className="py-24 bg-white">
       <div className="container mx-auto px-4 max-w-4xl">
-        <h1 className="text-4xl font-bold text-center mb-8">Terms and Conditions</h1>
+        <h1 className="text-4xl font-bold text-center mb-8">{t('legal.terms_conditions')}</h1>
         <div className="prose lg:prose-xl mx-auto text-gray-700">
           <h2>1. Introduction</h2>
           <p>

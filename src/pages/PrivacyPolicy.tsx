@@ -1,10 +1,13 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const PrivacyPolicy: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <div className="py-24 bg-white">
       <div className="container mx-auto px-4 max-w-4xl">
-        <h1 className="text-4xl font-bold text-center mb-8">Privacy Policy</h1>
+        <h1 className="text-4xl font-bold text-center mb-8">{t('legal.privacy_policy')}</h1>
         <div className="prose lg:prose-xl mx-auto text-gray-700">
           <p>
             This is a placeholder for your Privacy Policy. In a real application, you would detail how you collect, use, and protect your users' data.

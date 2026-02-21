@@ -3,30 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { 
   ChevronDown, Check, Percent, RefreshCw, Lock, ArrowUpDown, Filter, Star, 
-  Building, CalendarClock, Settings, Plus, Trash2, Layers, UserPlus
+  Building, CalendarClock, Settings, Plus, Trash2, Layers, UserPlus, ChevronLeft, ChevronRight
 } from 'lucide-react';
 
-// ==========================================
-// 1. DATA & TYPES
-// ==========================================
-interface Product { id: string; name: string; rate: number; fixedYears: number; }
-interface Bank { id: string; name: string; logo: string; products: Product[]; }
-interface KPRCalculatorProps { fixedHouseValue?: number; }
+// IMPORT YANG BENER DARI FILE DATA KITA
+import { Bank, Product, BANKS } from '../data/kprData';
 
-const BANKS: Bank[] = [
-  {
-    id: 'bca', name: 'BCA', logo: '',
-    products: [{ id: 'bca_1', name: 'KPR Fix 3 Thn', rate: 3.75, fixedYears: 3 }, { id: 'bca_2', name: 'KPR Fix 5 Thn', rate: 4.50, fixedYears: 5 }]
-  },
-  {
-    id: 'mandiri', name: 'Mandiri', logo: '',
-    products: [{ id: 'man_1', name: 'KPR Milenial', rate: 3.88, fixedYears: 3 }, { id: 'man_2', name: 'KPR Fix Berjenjang', rate: 4.25, fixedYears: 5 }]
-  },
-  {
-    id: 'cimb', name: 'CIMB Niaga', logo: '',
-    products: [{ id: 'cimb_1', name: 'KPR Xtra', rate: 5.00, fixedYears: 5 }]
-  }
-];
+// ==========================================
+// 1. TYPES & CONSTANTS
+// ==========================================
+interface KPRCalculatorProps { fixedHouseValue?: number; }
 
 const FLOATING_RATE = 11.0; 
 type TierType = 'Fixed' | 'Floating';
@@ -64,16 +50,28 @@ const KPRCalculator: React.FC<KPRCalculatorProps> = ({ fixedHouseValue }) => {
   const [isProductOpen, setIsProductOpen] = useState(false);
   const [sortOption, setSortOption] = useState<'lowestRate' | 'lowestPayment' | 'default'>('default');
   const [filterBankId, setFilterBankId] = useState<string>('all');
+  const bankScrollRef = useRef<HTMLDivElement>(null);
 
   // Sync Props
   useEffect(() => {
-    if (fixedHouseValue) { setHouseValue(fixedHouseValue); setDpAmount(fixedHouseValue * 0.2); }
+    if (fixedHouseValue) { 
+        setHouseValue(fixedHouseValue); 
+        setDpAmount(fixedHouseValue * 0.2); 
+    }
   }, [fixedHouseValue]);
 
   useEffect(() => {
     const existing = selectedBank.products.find(p => p.name === selectedProduct.name);
     setSelectedProduct(existing || selectedBank.products[0]);
   }, [selectedBank]);
+
+  // Scroll handler for bank list
+  const scroll = (direction: 'left' | 'right') => {
+    if (bankScrollRef.current) {
+      const scrollAmount = direction === 'left' ? -250 : 250;
+      bankScrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
 
   // Math Variables
   const dpPercent = (dpAmount / houseValue) * 100 || 0;
@@ -132,7 +130,6 @@ const KPRCalculator: React.FC<KPRCalculatorProps> = ({ fixedHouseValue }) => {
   }, [calcMode, loanAmount, tenure, selectedProduct, customProducts, activeCustomId]);
 
   const initialMonthlyPayment = schedule.length > 0 ? schedule[0].payment : 0;
-  const initialRate = schedule.length > 0 ? schedule[0].rate : 0;
   const totalInterest = schedule.reduce((acc, curr) => acc + curr.interest, 0);
   
   // Grafik Setup
@@ -222,13 +219,30 @@ const KPRCalculator: React.FC<KPRCalculatorProps> = ({ fixedHouseValue }) => {
                 {calcMode === 'bank' && (
                     <div>
                         <label className="block text-sm font-bold text-slate-700 mb-3">Pilih Bank Partner</label>
-                        <div className="flex overflow-x-auto gap-4 pb-2 scrollbar-hide snap-x">
-                            {BANKS.map((bank) => (
-                                <button key={bank.id} onClick={() => setSelectedBank(bank)} className={`flex-shrink-0 snap-center min-w-[120px] px-4 py-4 rounded-2xl border transition-all duration-300 flex flex-col items-center gap-3 ${selectedBank.id === bank.id ? 'border-pink-500 bg-pink-500 text-white shadow-lg shadow-pink-500/30' : 'border-slate-200 bg-white text-slate-600 hover:border-pink-300'}`}>
-                                   <Building size={24} className={selectedBank.id === bank.id ? 'text-white' : 'text-slate-400'}/>
-                                   <span className="text-sm font-bold">{bank.name}</span>
+                        <div className="relative group">
+                            <div ref={bankScrollRef} className="flex overflow-x-auto gap-4 pb-2 scrollbar-hide snap-x">
+                                {BANKS.map((bank) => (
+                                    <button key={bank.id} onClick={() => setSelectedBank(bank)} className={`flex-shrink-0 snap-center min-w-[120px] px-4 py-4 rounded-2xl border transition-all duration-300 flex flex-col items-center justify-center gap-3 ${selectedBank.id === bank.id ? 'border-pink-500 bg-pink-500 text-white shadow-lg shadow-pink-500/30' : 'border-slate-200 bg-white text-slate-600 hover:border-pink-300'}`}>
+                                        {/* Fallback ke icon kalau logo kosong biar gak pecah */}
+                                        {bank.logo ? (
+                                            <img src={bank.logo} alt={bank.name} className="h-8 object-contain rounded-md" />
+                                        ) : (
+                                            <Building size={24} className={selectedBank.id === bank.id ? 'text-white' : 'text-slate-400'}/>
+                                        )}
+                                        <span className="text-sm font-bold mt-1">{bank.name}</span>
+                                    </button>
+                                ))}
+                            </div>
+                            <div className="absolute top-1/2 -translate-y-1/2 -left-4 flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onClick={() => scroll('left')} className="bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-md border border-slate-100 text-slate-500 hover:text-pink-500 transition-all">
+                                    <ChevronLeft size={20} />
                                 </button>
-                            ))}
+                            </div>
+                            <div className="absolute top-1/2 -translate-y-1/2 -right-4 flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onClick={() => scroll('right')} className="bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-md border border-slate-100 text-slate-500 hover:text-pink-500 transition-all">
+                                    <ChevronRight size={20} />
+                                </button>
+                            </div>
                         </div>
                     </div>
                 )}
@@ -406,7 +420,6 @@ const KPRCalculator: React.FC<KPRCalculatorProps> = ({ fixedHouseValue }) => {
                         <h3 className="text-xl font-bold text-slate-800">Payment Schedule</h3>
                         <p className="text-sm text-slate-500">Detailed breakdown of principal and interest over {tenure} years.</p>
                     </div>
-                    {/* Locked Export Button sesuai desain gambar */}
                     <button 
                         onClick={() => navigate('/contact')}
                         className="flex items-center gap-2 px-5 py-2.5 bg-slate-100 text-slate-400 rounded-xl hover:bg-slate-200 transition-colors text-sm font-bold shadow-sm"
@@ -417,7 +430,6 @@ const KPRCalculator: React.FC<KPRCalculatorProps> = ({ fixedHouseValue }) => {
                 </div>
 
                 <div className="relative overflow-hidden rounded-xl border border-slate-100 shadow-sm">
-                    {/* Tabel ini bisa di-scroll secara vertical biar ga makan tempat terlalu panjang */}
                     <div className="overflow-x-auto max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300">
                         <table className="w-full text-sm text-left text-slate-600 relative">
                             <thead className="text-xs text-slate-500 uppercase bg-slate-50 sticky top-0 z-10 shadow-sm outline outline-1 outline-slate-100">
@@ -444,7 +456,6 @@ const KPRCalculator: React.FC<KPRCalculatorProps> = ({ fixedHouseValue }) => {
                     </div>
                 </div>
 
-                {/* Tombol Diskusikan dengan Agent (Warna Pink Soft) */}
                 <div className="mt-8 flex justify-center">
                     <button 
                         onClick={() => navigate('/contact')}
@@ -482,7 +493,14 @@ const KPRCalculator: React.FC<KPRCalculatorProps> = ({ fixedHouseValue }) => {
                              <div key={idx} onClick={() => { setSelectedBank(item.bank); setSelectedProduct(item.product); }} className={`cursor-pointer rounded-2xl p-5 border-2 transition-all duration-200 relative overflow-hidden bg-white ${isActive ? 'border-pink-500 shadow-lg shadow-pink-500/20 scale-[1.02]' : 'border-transparent hover:border-pink-200 shadow-sm'}`}>
                                  <div className="flex justify-between items-start mb-4">
                                      <div className="flex items-center gap-3">
-                                         <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-100 text-slate-400"><Building size={20}/></div>
+                                         <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-100 text-slate-400">
+                                            {/* Logic Logo yang Aman */}
+                                            {item.bank.logo ? (
+                                                <img src={item.bank.logo} alt={item.bank.name} className="h-6 object-contain rounded" />
+                                            ) : (
+                                                <Building size={20} />
+                                            )}
+                                         </div>
                                          <div>
                                              <h4 className="font-bold text-sm text-slate-800">{item.bank.name}</h4>
                                              <p className="text-[10px] text-slate-500 mt-0.5">{item.product.name}</p>

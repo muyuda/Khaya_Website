@@ -1,20 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Search, Menu, X, ChevronDown, Globe } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const Navbar: React.FC = () => {
+  const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [projectOpen, setProjectOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [lang, setLang] = useState<'EN' | 'ID'>('EN');
   const location = useLocation();
+
+  const currentLang = i18n.language.split('-')[0].toUpperCase();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const toggleLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+    setLangOpen(false);
+  };
 
   const isActive = (path: string) => 
     location.pathname === path 
@@ -34,11 +42,11 @@ const Navbar: React.FC = () => {
 
           {/* DESKTOP MENU */}
           <div className="hidden md:flex space-x-1 items-center">
-            <Link to="/" className={isActive('/')}>Home</Link>
+            <Link to="/" className={isActive('/')}>{t('navbar.home')}</Link>
             
             <div className="relative group" onMouseEnter={() => setProjectOpen(true)} onMouseLeave={() => setProjectOpen(false)}>
               <button className={`flex items-center gap-1 ${isActive('/projects')}`}>
-                Projects <ChevronDown size={14} />
+                {t('navbar.projects')} <ChevronDown size={14} />
               </button>
               {projectOpen && (
                 <div className="absolute left-0 mt-0 w-48 bg-white rounded-xl shadow-xl border border-slate-100 py-2 animate-in fade-in zoom-in duration-200">
@@ -48,19 +56,19 @@ const Navbar: React.FC = () => {
               )}
             </div>
 
-            <Link to="/kpr" className={isActive('/kpr')}>KPR</Link>
-            <Link to="/about" className={isActive('/about')}>About Us</Link>
-            <Link to="/contact" className={isActive('/contact')}>Contact Us</Link>
+            <Link to="/kpr" className={isActive('/kpr')}>{t('navbar.kpr')}</Link>
+            <Link to="/about" className={isActive('/about')}>{t('navbar.about')}</Link>
+            <Link to="/contact" className={isActive('/contact')}>{t('navbar.contact')}</Link>
 
             {/* Language Switcher */}
             <div className="relative ml-2">
                 <button onClick={() => setLangOpen(!langOpen)} className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold text-slate-600 hover:bg-slate-50 border border-transparent hover:border-slate-100">
-                    <Globe size={14} className="text-slate-400" /> {lang} <ChevronDown size={12} />
+                    <Globe size={14} className="text-slate-400" /> {currentLang} <ChevronDown size={12} />
                 </button>
                 {langOpen && (
                     <div className="absolute top-full right-0 mt-2 w-32 bg-white rounded-xl shadow-xl border border-slate-100 py-2 flex flex-col">
-                        <button onClick={() => { setLang('ID'); setLangOpen(false); }} className="px-4 py-2 text-left text-xs font-bold hover:bg-pink-50 text-slate-600">Bahasa (ID)</button>
-                        <button onClick={() => { setLang('EN'); setLangOpen(false); }} className="px-4 py-2 text-left text-xs font-bold hover:bg-pink-50 text-slate-600">English (EN)</button>
+                        <button onClick={() => toggleLanguage('id')} className="px-4 py-2 text-left text-xs font-bold hover:bg-pink-50 text-slate-600">Bahasa (ID)</button>
+                        <button onClick={() => toggleLanguage('en')} className="px-4 py-2 text-left text-xs font-bold hover:bg-pink-50 text-slate-600">English (EN)</button>
                     </div>
                 )}
             </div>

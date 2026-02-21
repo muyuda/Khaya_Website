@@ -25,5 +25,9 @@
     "project_card": {
         "new_label": "New",
         "unit_types_available": "Types Available"
+    },
+    "legal": {
+        "privacy_policy": "Privacy Policy",
+        "terms_conditions": "Terms and Conditions"
     }
   }

@@ -24,7 +24,7 @@ i18n
     },
 
     react: {
-      useSuspense: false, // Set to true if you want to use React Suspense
+      useSuspense: true, // Recommended to use true with Suspense component
     },
   });
 

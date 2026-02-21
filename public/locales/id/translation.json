@@ -25,5 +25,9 @@
     "project_card": {
         "new_label": "Baru",
         "unit_types_available": "Tipe Unit Tersedia"
+    },
+    "legal": {
+        "privacy_policy": "Kebijakan Privasi",
+        "terms_conditions": "Syarat dan Ketentuan"
     }
   }

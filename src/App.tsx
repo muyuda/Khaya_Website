@@ -18,6 +18,7 @@ import KPR from './pages/KPR';
 import ProjectsPage from './pages/ProjectsPage';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsConditions from './pages/TermsConditions';
+import FAQ from './pages/FAQ'; // Import the FAQ component
 
 // This component uses hooks that require Router context
 const AppContent: React.FC = () => {
@@ -45,6 +46,7 @@ const AppContent: React.FC = () => {
           <Route path="/kpr" element={<KPR />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-conditions" element={<TermsConditions />} />
+          <Route path="/faq" element={<FAQ />} /> {/* Add the FAQ route here */}
         </Routes>
       </main>
 

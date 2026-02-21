@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
@@ -12,6 +12,8 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <App />
+    <Suspense fallback={<div className="h-screen w-screen flex items-center justify-center">Loading...</div>}>
+      <App />
+    </Suspense>
   </React.StrictMode>
 );
